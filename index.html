@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SGPA Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('bg.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 700px;
+      text-align: center;
+      border: 2px solid #008080;
+      backdrop-filter: blur(10px);
+      animation: slideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .university-heading {
+      color: #004d40;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      letter-spacing: 1px;
+    }
+
+    .subheading {
+      color: #006064;
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 20px;
+      margin-bottom: 1rem;
+      border: 2px solid #8fd3f4;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-group input:focus {
+      border-color: #84fab0;
+      box-shadow: 0 0 8px rgba(143, 211, 244, 0.3);
+    }
+
+    .subject-input {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .subject-input label {
+      font-size: 1rem;
+      color: #34495e;
+      flex: 1;
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .subject-input select {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 2px solid #8fd3f4;
+      font-size: 1rem;
+      background: white;
+      transition: all 0.3s ease;
+      width: 120px;
+    }
+
+    .subject-input select:focus {
+      border-color: #84fab0;
+      box-shadow: 0 0 8px rgba(143, 211, 244, 0.3);
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    button {
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #008080, #006064);
+      color: white;
+      letter-spacing: 0.5px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 128, 128, 0.3);
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #e8f4f8;
+      border-radius: 10px;
+      font-size: 1.4rem;
+      color: #004d40;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      margin-top: 2.5rem;
+      font-size: 0.9rem;
+      color: #7f8c8d;
+    }
+
+    .footer a {
+      color: #008080;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: #006064;
+    }
+
+    .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .export-btn {
+      background: linear-gradient(135deg, #27ae60, #219a52);
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="university-heading">KIIT UNIVERSITY</div>
+    <div class="subheading">AUTUMN END SEMESTER SGPA CALCULATOR</div>
+    <h1>Calculate Your SGPA</h1>
+    <button class="export-btn" onclick="exportRecords()">Export Records</button>
+    <form id="sgpa-form">
+      <div class="form-group">
+        <input type="text" id="name" name="name" placeholder="Enter Your Name" required>
+        <input type="email" id="email" name="email" placeholder="Enter Your Email (must end with @kiit.ac.in)" required>
+        <div id="email-error" class="error"></div>
+      </div>
+      
+      <div class="subject-input">
+        <label for="ML">Machine Learning (ML)</label>
+        <select id="ML" name="ML">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="AI">Artificial Intelligence (AI)</label>
+        <select id="AI" name="AI">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="CC">Cloud Computing (CC)</label>
+        <select id="CC" name="CC">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="UHV">Universal Human Values (UHV)</label>
+        <select id="UHV" name="UHV">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="AFE">AFE/Elective</label>
+        <select id="AFE" name="AFE">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="CHASS">Coursera HASS</label>
+        <select id="CHASS" name="CHASS">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="MP">Mini Project</label>
+        <select id="MP" name="MP">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="ADLAB">AD Lab</label>
+        <select id="ADLAB" name="ADLAB">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      
+      <div class="subject-input">
+        <label for="AILAB">AI Lab</label>
+        <select id="AILAB" name="AILAB">
+          <option value="O">O</option>
+          <option value="E">E</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+
+      <div class="button-group">
+        <button type="button" onclick="calculateSGPA()">Calculate SGPA</button>
+      </div>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <div class="footer">
+      <p>© <a href="mailto:ayan05594@gmail.com">Ayan</a></p>
+      <p>Follow me on Instagram <a href="https://www.instagram.com/ahhyhonn/">@ahhyhonn</a></p>
+    </div>
+  </div>
+
+  <script>
+    async function calculateSGPA() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const emailError = document.getElementById('email-error');
+
+      if (!name || !email) {
+        alert('Please fill in both Name and Email fields.');
+        return;
+      }
+
+      if (!email.endsWith('@kiit.ac.in')) {
+        emailError.textContent = 'Email must end with @kiit.ac.in';
+        return;
+      } else {
+        emailError.textContent = '';
+      }
+
+      const gradePoints = { 'O': 10, 'E': 9, 'A': 8, 'B': 7, 'C': 6, 'D': 5 };
+      const credits = { 
+        ML: 4, 
+        AI: 3, 
+        CC: 3, 
+        UHV: 3, 
+        AFE: 3, 
+        CHASS: 3, 
+        MP: 2,
+        ADLAB: 2,
+        AILAB: 1
+      };
+      
+      const subjects = ['ML', 'AI', 'CC', 'UHV', 'AFE', 'CHASS', 'MP', 'ADLAB', 'AILAB'];
+      let totalGradePoints = 0;
+      let totalCredits = 0;
+
+      for (let subject of subjects) {
+        const grade = document.getElementById(subject).value;
+        const credit = credits[subject];
+        totalGradePoints += gradePoints[grade] * credit;
+        totalCredits += credit;
+      }
+
+      const sgpa = totalGradePoints / totalCredits;
+      const resultText = `Your SGPA is: ${sgpa.toFixed(2)}`;
+      document.getElementById('result').innerHTML = resultText;
+
+      // Create record object
+      const record = {
+        name: name,
+        email: email,
+        sgpa: sgpa.toFixed(2),
+        timestamp: new Date().toLocaleString()
+      };
+
+      // Send record to the backend
+      try {
+        const response = await fetch('http://localhost:3000/save-record', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(record),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save record on the server.');
+        }
+
+        const data = await response.json();
+        console.log(data.message);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to save record. Please try again.');
+      }
+    }
+
+    async function exportRecords() {
+      try {
+        const response = await fetch('http://localhost:3000/get-records');
+        if (!response.ok) {
+          throw new Error('Failed to fetch records from the server.');
+        }
+
+        const records = await response.json();
+        if (records.length === 0) {
+          alert('No records found to export.');
+          return;
+        }
+
+        const textData = records.map((record, index) => 
+          `Record ${index + 1}:\nName: ${record.name}\nEmail: ${record.email}\nSGPA: ${record.sgpa}\nDate: ${record.timestamp}\n\n`
+        ).join('');
+
+        const blob = new Blob([textData], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sgpa_records.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to fetch records. Please try again.');
+      }
+    }
+  </script>
+</body>
+</html>

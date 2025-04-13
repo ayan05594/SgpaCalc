@@ -358,7 +358,7 @@
         const grade = document.getElementById(subject).value;
         const credit = credits[subject];
         totalGradePoints += gradePoints[grade] * credit;
-        totalCredits += credit;
+        totalCredits = 24;
       }
 
       const sgpa = totalGradePoints / totalCredits;
